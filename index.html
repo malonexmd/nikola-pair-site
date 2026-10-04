@@ -4,49 +4,44 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="theme-color" content="#1a1a2e">
-  <meta name="description" content="NIKOLA MD — Pair your WhatsApp account">
+  <meta name="description" content="NIKOLA MD — Get your WhatsApp session code">
   <title>NIKOLA MD — Pair WhatsApp</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
   <style>
-    /* ── Design tokens ── */
+    /* ── Owner config — EDIT THESE TWO VALUES ── */
+    /* After deploying your bot, change BOT_URL to your bot's URL         */
+    /* and MASTER_PASSWORD to match your bot's settings.js                */
+    /* (these are embedded in the page — anyone can read them, so use a   */
+    /*  password you don't mind users knowing, or refactor to a backend)  */
+
     :root {
-      --brand:          #7c3aed;
-      --brand-dark:     #6d28d9;
-      --brand-light:    #8b5cf6;
-      --accent:         #06b6d4;
-      --success:        #10b981;
-      --error:          #ef4444;
-      --warning:        #f59e0b;
-      --info:           #3b82f6;
-
-      --bg:             #0f0f17;
-      --bg-card:        #16161f;
-      --bg-elevated:    #1e1e2b;
-      --bg-input:       #12121a;
-
-      --text-primary:   #f1f5f9;
+      --brand: #7c3aed;
+      --brand-dark: #6d28d9;
+      --brand-light: #8b5cf6;
+      --accent: #06b6d4;
+      --success: #10b981;
+      --error: #ef4444;
+      --bg: #0f0f17;
+      --bg-card: #16161f;
+      --bg-elevated: #1e1e2b;
+      --bg-input: #12121a;
+      --text-primary: #f1f5f9;
       --text-secondary: #94a3b8;
-      --text-muted:     #64748b;
-
-      --border:         rgba(255,255,255,0.07);
-      --border-focus:   rgba(124, 58, 237, 0.5);
-
-      --shadow-md:  0 4px 12px rgba(0,0,0,0.4);
-      --shadow-xl:  0 20px 50px rgba(0,0,0,0.6);
-
-      --radius-md:  10px;
-      --radius-lg:  14px;
-      --radius-xl:  20px;
-
+      --text-muted: #64748b;
+      --border: rgba(255,255,255,0.07);
+      --radius-md: 10px;
+      --radius-lg: 14px;
+      --radius-xl: 20px;
+      --shadow-xl: 0 20px 50px rgba(0,0,0,0.6);
       --transition: all 0.2s cubic-bezier(0.4,0,0.2,1);
     }
 
-    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-    html { scroll-behavior:smooth; }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
     body {
-      font-family:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       background: var(--bg);
       min-height: 100vh;
       color: var(--text-primary);
@@ -55,18 +50,15 @@
       overflow-x: hidden;
     }
 
-    /* Ambient background */
     .ambient {
       position: fixed; inset: 0; pointer-events: none; z-index: 0;
       background:
         radial-gradient(ellipse 60% 40% at 20% 10%, rgba(124,58,237,0.15) 0%, transparent 60%),
-        radial-gradient(ellipse 40% 30% at 80% 80%, rgba(6,182,212,0.08) 0%, transparent 50%),
-        radial-gradient(ellipse 30% 20% at 50% 50%, rgba(16,185,129,0.04) 0%, transparent 50%);
+        radial-gradient(ellipse 40% 30% at 80% 80%, rgba(6,182,212,0.08) 0%, transparent 50%);
     }
 
     .hidden { display: none !important; }
 
-    /* Page wrapper */
     .page {
       position: relative; z-index: 1;
       min-height: 100vh;
@@ -76,10 +68,9 @@
       padding: 24px 16px;
     }
 
-    /* Card shell */
     .pair-shell {
       width: 100%;
-      max-width: 480px;
+      max-width: 420px;
       background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: var(--radius-xl);
@@ -89,11 +80,10 @@
     }
 
     @keyframes fadeUp {
-      from { opacity:0; transform:translateY(24px); }
-      to   { opacity:1; transform:translateY(0); }
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
 
-    /* Brand header */
     .brand-header {
       padding: 36px 32px 24px;
       text-align: center;
@@ -111,7 +101,7 @@
       50%      { transform: scale(1.05); }
     }
     .brand-name {
-      font-size: 28px;
+      font-size: 26px;
       font-weight: 800;
       letter-spacing: 2px;
       background: linear-gradient(135deg, var(--brand-light), var(--accent));
@@ -126,113 +116,28 @@
       font-weight: 500;
     }
 
-    /* Server config banner */
-    .server-banner {
-      padding: 10px 16px;
-      background: var(--bg-elevated);
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      font-size: 12px;
-    }
-    .server-status {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      color: var(--text-secondary);
-    }
-    .server-dot {
-      width: 8px; height: 8px;
-      border-radius: 50%;
-      background: var(--success);
-      box-shadow: 0 0 8px rgba(16,185,129,0.5);
-    }
-    .server-dot.offline { background: var(--error); box-shadow: 0 0 8px rgba(239,68,68,0.5); }
-    .server-dot.unknown { background: var(--text-muted); box-shadow: none; }
-    .server-url {
-      color: var(--text-muted);
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      max-width: 60%;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-    .server-edit {
-      background: none;
-      border: 1px solid var(--border);
-      color: var(--text-secondary);
-      padding: 4px 10px;
-      border-radius: 6px;
-      font-size: 11px;
-      cursor: pointer;
-      transition: var(--transition);
-    }
-    .server-edit:hover {
-      background: var(--brand);
-      color: white;
-      border-color: var(--brand);
-    }
-
-    /* Card body */
     .pair-body { padding: 28px 32px 32px; }
 
-    /* Step indicator */
-    .steps {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 24px;
-      padding: 0 4px;
-    }
-    .step { display: flex; align-items: center; gap: 8px; flex: 1; }
-    .step-circle {
-      width: 28px; height: 28px;
-      border-radius: 50%;
-      background: var(--bg-elevated);
-      border: 2px solid var(--border);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 12px; font-weight: 700;
-      color: var(--text-muted);
-      transition: var(--transition);
-      flex-shrink: 0;
-    }
-    .step.active .step-circle {
-      background: var(--brand); border-color: var(--brand); color: white;
-      box-shadow: 0 0 0 4px rgba(124,58,237,0.15);
-    }
-    .step.done .step-circle {
-      background: var(--success); border-color: var(--success); color: white;
-    }
-    .step-label {
-      font-size: 11px; font-weight: 600;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-    .step.active .step-label { color: var(--text-primary); }
-    .step.done .step-label { color: var(--success); }
-    .step-divider { flex: 0 0 24px; height: 2px; background: var(--border); margin: 0 8px; }
-
-    /* Forms */
     .form-group { margin-bottom: 16px; }
     .form-label {
-      display: block; font-size: 12px; font-weight: 600;
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
       color: var(--text-secondary);
-      margin-bottom: 6px;
+      margin-bottom: 8px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
     .form-input {
-      width: 100%; padding: 14px 16px;
+      width: 100%;
+      padding: 16px;
       background: var(--bg-input);
       border: 1px solid var(--border);
       border-radius: var(--radius-md);
       color: var(--text-primary);
-      font-size: 16px;
+      font-size: 18px;
       font-family: inherit;
+      text-align: center;
       transition: var(--transition);
     }
     .form-input:focus {
@@ -241,14 +146,23 @@
       box-shadow: 0 0 0 3px rgba(124,58,237,0.15);
     }
     .form-input::placeholder { color: var(--text-muted); }
-    .form-hint { font-size: 12px; color: var(--text-muted); margin-top: 6px; }
+    .form-hint {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-align: center;
+      margin-top: 8px;
+    }
 
-    /* Buttons */
     .btn {
-      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-      padding: 14px 20px;
-      border: none; border-radius: var(--radius-md);
-      font-size: 14px; font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 16px 20px;
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: 15px;
+      font-weight: 600;
       font-family: inherit;
       cursor: pointer;
       transition: var(--transition);
@@ -263,146 +177,120 @@
       transform: translateY(-1px);
       box-shadow: 0 6px 16px rgba(124,58,237,0.4);
     }
-    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
     .btn-secondary {
       background: var(--bg-elevated);
       color: var(--text-primary);
       border: 1px solid var(--border);
     }
-    .btn-secondary:hover { background: var(--bg-input); border-color: var(--border-focus); }
+    .btn-secondary:hover {
+      background: var(--bg-input);
+      border-color: var(--brand);
+    }
     .btn-full { width: 100%; }
 
-    /* Alert boxes */
     .alert {
       padding: 12px 16px;
       border-radius: var(--radius-md);
-      font-size: 13px; font-weight: 500;
+      font-size: 13px;
+      font-weight: 500;
       margin-bottom: 16px;
-      display: flex; align-items: center; gap: 10px;
+      text-align: center;
     }
-    .alert-info    { background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.3); color: #93c5fd; }
-    .alert-success { background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); color: #6ee7b7; }
-    .alert-error   { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); color: #fca5a5; }
-    .alert-warning { background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.3); color: #fcd34d; }
+    .alert-info    { background: rgba(59,130,246,0.1);  border: 1px solid rgba(59,130,246,0.3);  color: #93c5fd; }
+    .alert-success { background: rgba(16,185,129,0.1);  border: 1px solid rgba(16,185,129,0.3);  color: #6ee7b7; }
+    .alert-error   { background: rgba(239,68,68,0.1);   border: 1px solid rgba(239,68,68,0.3);   color: #fca5a5; }
 
-    /* Pairing code display */
-    .pair-code-box {
-      background: linear-gradient(135deg, rgba(124,58,237,0.08) 0%, rgba(6,182,212,0.05) 100%);
+    /* Code display — tap to copy */
+    .code-display {
+      background: linear-gradient(135deg, rgba(124,58,237,0.1) 0%, rgba(6,182,212,0.06) 100%);
       border: 2px dashed var(--brand);
       border-radius: var(--radius-lg);
-      padding: 24px 20px;
+      padding: 32px 20px;
       text-align: center;
       margin: 20px 0;
+      cursor: pointer;
+      transition: var(--transition);
+      position: relative;
     }
-    .pair-code-label {
-      font-size: 11px; font-weight: 700;
+    .code-display:hover {
+      border-color: var(--brand-light);
+      background: linear-gradient(135deg, rgba(124,58,237,0.15) 0%, rgba(6,182,212,0.1) 100%);
+      transform: translateY(-1px);
+    }
+    .code-display:active { transform: translateY(0); }
+    .code-display.copied {
+      border-color: var(--success);
+      background: rgba(16,185,129,0.1);
+    }
+    .code-label {
+      font-size: 11px;
+      font-weight: 700;
       color: var(--text-secondary);
       text-transform: uppercase;
       letter-spacing: 1.5px;
       margin-bottom: 12px;
     }
-    .pair-code {
+    .code-value {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 42px; font-weight: 700;
+      font-size: 40px;
+      font-weight: 700;
       letter-spacing: 6px;
       color: var(--brand-light);
       text-shadow: 0 0 20px rgba(124,58,237,0.4);
       margin-bottom: 8px;
+      user-select: all;
     }
-    .pair-code-timer { font-size: 12px; color: var(--text-muted); font-weight: 500; }
-    .pair-code-timer.urgent { color: var(--error); font-weight: 700; }
+    .code-tap-hint {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .code-display.copied .code-tap-hint {
+      color: var(--success);
+    }
+    .code-timer {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 8px;
+    }
+    .code-timer.urgent { color: var(--error); font-weight: 700; }
 
-    /* Instructions */
-    .instructions {
-      background: var(--bg-elevated);
-      border-radius: var(--radius-md);
-      padding: 16px;
-      margin: 16px 0;
-    }
-    .instructions-title {
-      font-size: 12px; font-weight: 700;
-      color: var(--text-secondary);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 12px;
-    }
-    .instructions ol { list-style: none; counter-reset: step; }
-    .instructions li {
-      counter-increment: step;
-      padding: 6px 0 6px 32px;
-      position: relative;
-      font-size: 13px;
-      color: var(--text-primary);
-    }
-    .instructions li::before {
-      content: counter(step);
-      position: absolute;
-      left: 0; top: 6px;
-      width: 22px; height: 22px;
-      background: var(--brand);
-      color: white;
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 11px; font-weight: 700;
-    }
-
-    /* Status indicator */
-    .status-indicator {
-      display: flex; align-items: center; justify-content: center; gap: 10px;
-      padding: 16px; margin: 16px 0;
-      background: var(--bg-elevated);
-      border-radius: var(--radius-md);
-    }
-    .status-spinner {
-      width: 20px; height: 20px;
-      border: 2px solid var(--border);
-      border-top-color: var(--brand);
+    .spinner {
+      display: inline-block;
+      width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: white;
       border-radius: 50%;
       animation: spin 0.8s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
-    .status-text { font-size: 14px; font-weight: 500; color: var(--text-primary); }
 
-    /* Success card */
-    .success-card { text-align: center; padding: 24px 16px; }
-    .success-icon {
-      font-size: 64px;
-      margin-bottom: 16px;
-      animation: bounceIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-    @keyframes bounceIn {
-      0%   { transform: scale(0); }
-      60%  { transform: scale(1.2); }
-      100% { transform: scale(1); }
-    }
-    .success-title { font-size: 22px; font-weight: 700; color: var(--success); margin-bottom: 8px; }
-    .success-text { font-size: 14px; color: var(--text-secondary); margin-bottom: 20px; }
-    .session-id-box {
-      background: var(--bg-input);
-      border: 1px solid var(--border);
+    .whatsapp-link {
+      display: block;
+      text-align: center;
+      margin-top: 16px;
+      padding: 12px;
+      background: #25D366;
+      color: white;
+      text-decoration: none;
       border-radius: var(--radius-md);
-      padding: 12px 16px;
-      margin: 16px 0;
-      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
       font-size: 14px;
-      color: var(--text-primary);
-      display: flex; align-items: center; justify-content: space-between; gap: 12px;
-    }
-    .session-id-label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
-    .session-id-value { flex: 1; text-align: right; word-break: break-all; }
-    .copy-btn {
-      background: var(--bg-elevated);
-      border: 1px solid var(--border);
-      color: var(--text-secondary);
-      padding: 6px 10px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 12px;
       transition: var(--transition);
     }
-    .copy-btn:hover { background: var(--brand); color: white; border-color: var(--brand); }
+    .whatsapp-link:hover {
+      background: #1eb558;
+      transform: translateY(-1px);
+    }
 
-    /* Footer */
     .pair-footer {
       padding: 16px 32px 24px;
       text-align: center;
@@ -411,41 +299,12 @@
       border-top: 1px solid var(--border);
     }
     .pair-footer a { color: var(--brand-light); text-decoration: none; font-weight: 500; }
-    .pair-footer a:hover { text-decoration: underline; }
-
-    /* Server config modal */
-    .modal-overlay {
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,0.7);
-      backdrop-filter: blur(4px);
-      z-index: 100;
-      display: flex; align-items: center; justify-content: center;
-      padding: 16px;
-      animation: fadeIn 0.2s;
-    }
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    .modal {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 24px;
-      max-width: 420px;
-      width: 100%;
-      animation: fadeUp 0.3s;
-    }
-    .modal-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
-    .modal-desc { font-size: 13px; color: var(--text-secondary); margin-bottom: 16px; }
-
-    [data-step].hidden { display: none !important; }
 
     @media (max-width: 480px) {
       .pair-shell { max-width: 100%; }
       .brand-header { padding: 28px 24px 20px; }
       .pair-body { padding: 24px; }
-      .pair-code { font-size: 36px; letter-spacing: 4px; }
-      .step-label { display: none; }
-      .step { flex: 0 0 auto; }
-      .step-divider { flex: 1; }
+      .code-value { font-size: 32px; letter-spacing: 4px; }
     }
   </style>
 </head>
@@ -459,339 +318,173 @@
       <div class="brand-header">
         <div class="brand-logo">♻️</div>
         <div class="brand-name">NIKOLA MD</div>
-        <div class="brand-sub">Pair your WhatsApp account</div>
-      </div>
-
-      <!-- Server config banner -->
-      <div class="server-banner">
-        <div class="server-status">
-          <div class="server-dot unknown" id="serverDot"></div>
-          <span id="serverStatus">Checking…</span>
-        </div>
-        <div class="server-url" id="serverUrlDisplay">—</div>
-        <button class="server-edit" onclick="openServerModal()">⚙️ Edit</button>
+        <div class="brand-sub">Get your WhatsApp session code</div>
       </div>
 
       <!-- Body -->
       <div class="pair-body">
 
-        <!-- Step indicator -->
-        <div class="steps">
-          <div class="step active" id="step1">
-            <div class="step-circle">1</div>
-            <div class="step-label">Number</div>
-          </div>
-          <div class="step-divider"></div>
-          <div class="step" id="step2">
-            <div class="step-circle">2</div>
-            <div class="step-label">Link</div>
-          </div>
-          <div class="step-divider"></div>
-          <div class="step" id="step3">
-            <div class="step-circle">3</div>
-            <div class="step-label">Done</div>
-          </div>
-        </div>
+        <!-- Alert area -->
+        <div id="alert" class="alert hidden"></div>
 
-        <!-- STEP 1: Enter phone number + password -->
-        <div data-step="1" id="step1Content">
-          <div id="step1Alert" class="alert hidden"></div>
-
-          <form onsubmit="event.preventDefault(); startPairing()">
-            <div class="form-group">
-              <label class="form-label" for="phone">📱 WhatsApp Number</label>
-              <input
-                type="tel"
-                id="phone"
-                class="form-input"
-                placeholder="254712345678"
-                required
-                autocomplete="tel"
-                pattern="[0-9+]+"
-                title="Enter your full phone number with country code"
-              >
-              <p class="form-hint">Include country code, no spaces or symbols. Example: 254712345678</p>
-            </div>
-
-            <div class="form-group">
-              <label class="form-label" for="password">🔑 Master Password</label>
-              <input
-                type="password"
-                id="password"
-                class="form-input"
-                placeholder="Enter master password"
-                required
-                autocomplete="current-password"
-              >
-              <p class="form-hint">Provided by the bot owner</p>
-            </div>
-
-            <button type="submit" class="btn btn-primary btn-full" id="startBtn">
-              <span>🔗 Generate Pairing Code</span>
-            </button>
-          </form>
-        </div>
-
-        <!-- STEP 2: Show pairing code + wait for linking -->
-        <div data-step="2" id="step2Content" class="hidden">
-          <div id="step2Alert" class="alert alert-info">
-            <span>⏳ Waiting for you to link WhatsApp...</span>
+        <!-- Input form -->
+        <div id="inputView">
+          <div class="form-group">
+            <label class="form-label" for="phone">📱 WhatsApp Number</label>
+            <input
+              type="tel"
+              id="phone"
+              class="form-input"
+              placeholder="254712345678"
+              required
+              autocomplete="tel"
+              pattern="[0-9+]+"
+              inputmode="numeric"
+              title="Enter your full phone number with country code"
+            >
+            <p class="form-hint">Include country code, no spaces or symbols</p>
           </div>
 
-          <div class="pair-code-box">
-            <div class="pair-code-label">Your Pairing Code</div>
-            <div class="pair-code" id="pairCode">• • • • • •</div>
-            <div class="pair-code-timer" id="pairCodeTimer">Expires in 2:00</div>
-          </div>
-
-          <div class="instructions">
-            <div class="instructions-title">📋 How to link</div>
-            <ol>
-              <li>Open <strong>WhatsApp</strong> on your phone</li>
-              <li>Go to <strong>Settings → Linked Devices</strong></li>
-              <li>Tap <strong>Link a Device</strong></li>
-              <li>Choose <strong>Link with phone number instead</strong></li>
-              <li>Enter the 8-digit code above</li>
-            </ol>
-          </div>
-
-          <div class="status-indicator">
-            <div class="status-spinner"></div>
-            <div class="status-text" id="linkingStatus">Waiting for linking...</div>
-          </div>
-
-          <button type="button" class="btn btn-secondary btn-full" onclick="cancelPairing()">
-            ✕ Cancel
+          <button type="button" class="btn btn-primary btn-full" id="generateBtn" onclick="generateCode()">
+            <span>🔗 Generate Session Code</span>
           </button>
         </div>
 
-        <!-- STEP 3: Success -->
-        <div data-step="3" id="step3Content" class="hidden">
-          <div class="success-card">
-            <div class="success-icon">✅</div>
-            <div class="success-title">Successfully Paired!</div>
-            <div class="success-text">
-              Your WhatsApp is now linked to NIKOLA MD.
-              Save your session ID below — you'll need it to log in.
-            </div>
-
-            <div class="session-id-box">
-              <span class="session-id-label">Session ID</span>
-              <span class="session-id-value" id="sessionIdDisplay">—</span>
-              <button class="copy-btn" onclick="copySessionId()" id="copyBtn">Copy</button>
-            </div>
-
-            <a href="#" id="dashboardLink" class="btn btn-primary btn-full" style="margin-top:8px;" target="_blank">
-              🚪 Go to Dashboard
-            </a>
-            <button type="button" class="btn btn-secondary btn-full" style="margin-top:8px;" onclick="resetToStep1()">
-              ➕ Pair Another Number
-            </button>
+        <!-- Code view (hidden initially) -->
+        <div id="codeView" class="hidden">
+          <div class="code-display" id="codeBox" onclick="copyCode()">
+            <div class="code-label">Your Pairing Code</div>
+            <div class="code-value" id="codeValue">• • • • • •</div>
+            <div class="code-tap-hint" id="tapHint">👆 Tap to copy</div>
+            <div class="code-timer" id="codeTimer">Expires in 2:00</div>
           </div>
+
+          <a href="https://wa.me/settings/linked_devices" class="whatsapp-link" target="_blank">
+            💬 Open WhatsApp Linked Devices
+          </a>
+
+          <button type="button" class="btn btn-secondary btn-full" style="margin-top:12px;" onclick="resetForm()">
+            ➕ Generate Another Code
+          </button>
         </div>
 
       </div>
 
       <!-- Footer -->
       <div class="pair-footer">
-        ♻️ <strong>NIKOLA MD</strong> — Multi-Session WhatsApp Bot<br>
-        Need help? Type <code>.owner</code> in any bot chat
+        ♻️ <strong>NIKOLA MD</strong> — Multi-Session WhatsApp Bot
       </div>
 
-    </div>
-  </div>
-
-  <!-- Server config modal -->
-  <div class="modal-overlay hidden" id="serverModal">
-    <div class="modal">
-      <div class="modal-title">⚙️ Bot Server URL</div>
-      <div class="modal-desc">
-        Enter the URL where your NIKOLA MD bot is running.
-        Examples: <code>https://your-app.herokuapp.com</code> or <code>http://localhost:3000</code>
-      </div>
-      <div class="form-group">
-        <label class="form-label" for="serverUrlInput">Server URL</label>
-        <input
-          type="url"
-          id="serverUrlInput"
-          class="form-input"
-          placeholder="https://your-bot.herokuapp.com"
-          required
-        >
-        <p class="form-hint">No trailing slash. The pair site will call <code>/api/*</code> endpoints on this URL.</p>
-      </div>
-      <div style="display:flex; gap:8px; margin-top:16px;">
-        <button class="btn btn-secondary" style="flex:1;" onclick="closeServerModal()">Cancel</button>
-        <button class="btn btn-primary" style="flex:1;" onclick="saveServerUrl()">Save</button>
-      </div>
     </div>
   </div>
 
   <script>
-    // ── State ──
+    // ════════════════════════════════════════════════════════════
+    // ⚠️  OWNER CONFIGURATION — EDIT THESE TWO VALUES  ⚠️
+    // ════════════════════════════════════════════════════════════
+    //
+    // 1. BOT_URL: The URL where your NIKOLA MD bot is running
+    //    Example: 'https://nikola-md-bot.herokuapp.com'
+    //             (no trailing slash)
+    //
+    // 2. MASTER_PASSWORD: Must match MASTER_PASSWORD in your bot's
+    //    settings.js so the pair site can call the bot's API.
+    //
+    // Change these after you deploy your bot, then commit & push
+    // to update the live GitHub Pages site.
+    // ════════════════════════════════════════════════════════════
+
+    const BOT_URL = 'https://nikola-md-bot.herokuapp.com';
+    const MASTER_PASSWORD = '123456';
+
+    // ════════════════════════════════════════════════════════════
+    // End of owner config — don't edit below unless you know JS
+    // ════════════════════════════════════════════════════════════
+
     let currentPhone = '';
-    let currentPassword = '';
+    let countdownInterval = null;
     let pairingCodeInterval = null;
     let pairingStatusInterval = null;
-    let countdownInterval = null;
     let codeExpiresAt = 0;
 
-    // ── Bot server URL (persisted in localStorage) ──
-    const DEFAULT_SERVER = 'https://nikola-md.herokuapp.com';
-    function getServerUrl() {
-      return (localStorage.getItem('nikola_server_url') || DEFAULT_SERVER).replace(/\/+$/, '');
-    }
-    function setServerUrl(url) {
-      localStorage.setItem('nikola_server_url', url.replace(/\/+$/, ''));
-    }
-
-    // ── Server status check ──
-    async function checkServerStatus() {
-      const url = getServerUrl();
-      const dot = document.getElementById('serverDot');
-      const status = document.getElementById('serverStatus');
-      const urlDisplay = document.getElementById('serverUrlDisplay');
-
-      urlDisplay.textContent = url;
-      dot.className = 'server-dot unknown';
-      status.textContent = 'Checking…';
-
-      try {
-        // Try a simple HEAD request first
-        const res = await fetch(url + '/', { method: 'HEAD', mode: 'no-cors', cache: 'no-store' });
-        // no-cors mode returns opaque response, but no error means reachable
-        dot.className = 'server-dot';
-        status.textContent = 'Online';
-      } catch {
-        // Try fallback: simple GET to root
-        try {
-          await fetch(url + '/', { mode: 'no-cors', cache: 'no-store' });
-          dot.className = 'server-dot';
-          status.textContent = 'Online';
-        } catch {
-          dot.className = 'server-dot offline';
-          status.textContent = 'Offline';
-        }
-      }
-    }
-
-    // ── Server modal ──
-    function openServerModal() {
-      document.getElementById('serverUrlInput').value = getServerUrl();
-      document.getElementById('serverModal').classList.remove('hidden');
-    }
-    function closeServerModal() {
-      document.getElementById('serverModal').classList.add('hidden');
-    }
-    function saveServerUrl() {
-      const url = document.getElementById('serverUrlInput').value.trim();
-      if (!url) return;
-      try {
-        new URL(url); // validate
-      } catch {
-        alert('Invalid URL');
-        return;
-      }
-      setServerUrl(url);
-      closeServerModal();
-      checkServerStatus();
-    }
-
-    // ── Helpers ──
-    function showAlert(el, message, type) {
+    function showAlert(message, type) {
+      const el = document.getElementById('alert');
       el.className = 'alert alert-' + type;
-      el.innerHTML = '<span>' + message + '</span>';
+      el.textContent = message;
       el.classList.remove('hidden');
     }
 
-    function setStep(stepNum) {
-      ['step1', 'step2', 'step3'].forEach((id, i) => {
-        const el = document.getElementById(id);
-        el.classList.remove('active', 'done');
-        if (i + 1 < stepNum) el.classList.add('done');
-        if (i + 1 === stepNum) el.classList.add('active');
-      });
-      ['step1Content', 'step2Content', 'step3Content'].forEach((id, i) => {
-        const el = document.getElementById(id);
-        if (i + 1 === stepNum) el.classList.remove('hidden');
-        else el.classList.add('hidden');
-      });
+    function hideAlert() {
+      document.getElementById('alert').classList.add('hidden');
     }
 
-    // ── Step 1: Start pairing ──
-    async function startPairing() {
+    // ── Generate the pairing code ──
+    async function generateCode() {
       const phoneInput = document.getElementById('phone').value.trim();
-      const passwordInput = document.getElementById('password').value;
-      const alertBox = document.getElementById('step1Alert');
-      const startBtn = document.getElementById('startBtn');
-
       const phone = phoneInput.replace(/[^\d]/g, '');
+      const btn = document.getElementById('generateBtn');
 
       if (phone.length < 7 || phone.length > 15) {
-        showAlert(alertBox, '⚠️ Invalid phone number. Use format: 254712345678', 'error');
-        return;
-      }
-      if (!passwordInput) {
-        showAlert(alertBox, '⚠️ Please enter the master password', 'error');
+        showAlert('⚠️ Invalid number. Use format: 254712345678', 'error');
         return;
       }
 
-      startBtn.disabled = true;
-      startBtn.innerHTML = '<span>⏳ Generating...</span>';
-      showAlert(alertBox, '🔄 Generating pairing code...', 'info');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Generating...';
+      hideAlert();
 
       try {
-        const serverUrl = getServerUrl();
-        const res = await fetch(serverUrl + '/api/register-session', {
+        const res = await fetch(BOT_URL + '/api/register-session', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ password: passwordInput, phone })
+          body: JSON.stringify({ password: MASTER_PASSWORD, phone })
         });
 
         const data = await res.json();
 
         if (!res.ok) {
-          showAlert(alertBox, '❌ ' + (data.error || 'Failed to start pairing'), 'error');
-          startBtn.disabled = false;
-          startBtn.innerHTML = '<span>🔗 Generate Pairing Code</span>';
+          showAlert('❌ ' + (data.error || 'Failed to generate code. Is the bot online?'), 'error');
+          btn.disabled = false;
+          btn.innerHTML = '<span>🔗 Generate Session Code</span>';
           return;
         }
 
         currentPhone = phone;
-        currentPassword = passwordInput;
 
-        setStep(2);
+        // Switch to code view
+        document.getElementById('inputView').classList.add('hidden');
+        document.getElementById('codeView').classList.remove('hidden');
 
+        // Show pairing code if available
         if (data.pairingCode) {
-          document.getElementById('pairCode').textContent = data.pairingCode;
+          document.getElementById('codeValue').textContent = data.pairingCode;
         }
 
+        // Start 2-minute countdown
         codeExpiresAt = Date.now() + 2 * 60 * 1000;
         startCountdown();
-        startPairingCodePolling();
-        startPairingStatusPolling();
+        startPolling();
 
       } catch (error) {
-        showAlert(alertBox, '❌ Error: ' + error.message + '. Check the bot server URL (⚙️ Edit).', 'error');
-        startBtn.disabled = false;
-        startBtn.innerHTML = '<span>🔗 Generate Pairing Code</span>';
+        showAlert('❌ Cannot reach bot. Check your internet or try again later.', 'error');
+        btn.disabled = false;
+        btn.innerHTML = '<span>🔗 Generate Session Code</span>';
       }
     }
 
-    // ── Countdown ──
+    // ── Countdown timer ──
     function startCountdown() {
       if (countdownInterval) clearInterval(countdownInterval);
-      const timerEl = document.getElementById('pairCodeTimer');
+      const timerEl = document.getElementById('codeTimer');
 
       const update = () => {
         const remaining = Math.max(0, codeExpiresAt - Date.now());
         if (remaining <= 0) {
-          timerEl.textContent = 'Code expired';
+          timerEl.textContent = '⏰ Code expired — generate a new one';
           timerEl.classList.add('urgent');
           clearInterval(countdownInterval);
           countdownInterval = null;
-          document.getElementById('linkingStatus').textContent = 'Code expired. Please try again.';
-          setTimeout(() => resetToStep1(), 2000);
+          stopPolling();
           return;
         }
         const mins = Math.floor(remaining / 60000);
@@ -804,24 +497,19 @@
       countdownInterval = setInterval(update, 1000);
     }
 
-    // ── Poll pairing code ──
-    function startPairingCodePolling() {
-      if (pairingCodeInterval) clearInterval(pairingCodeInterval);
-      const serverUrl = getServerUrl();
-
-      const poll = async () => {
+    // ── Poll for code updates + pairing status ──
+    function startPolling() {
+      const pollCode = async () => {
         try {
-          const res = await fetch(serverUrl + '/api/pairing-code', {
+          const res = await fetch(BOT_URL + '/api/pairing-code', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ phone: currentPhone, password: currentPassword })
+            body: JSON.stringify({ phone: currentPhone, password: MASTER_PASSWORD })
           });
-
           if (res.status === 404) return;
-
           const data = await res.json();
           if (res.ok && data.code) {
-            const codeEl = document.getElementById('pairCode');
+            const codeEl = document.getElementById('codeValue');
             if (codeEl.textContent !== data.code) {
               codeEl.textContent = data.code;
             }
@@ -829,92 +517,107 @@
         } catch {}
       };
 
-      poll();
-      pairingCodeInterval = setInterval(poll, 5000);
-    }
-
-    // ── Poll pairing status ──
-    function startPairingStatusPolling() {
-      if (pairingStatusInterval) clearInterval(pairingStatusInterval);
-      const serverUrl = getServerUrl();
-      const statusEl = document.getElementById('linkingStatus');
-      let dots = 0;
-
-      const poll = async () => {
+      const pollStatus = async () => {
         try {
-          const res = await fetch(serverUrl + '/api/pairing-status', {
+          const res = await fetch(BOT_URL + '/api/pairing-status', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ phone: currentPhone, password: currentPassword })
+            body: JSON.stringify({ phone: currentPhone, password: MASTER_PASSWORD })
           });
-
           const data = await res.json();
           if (res.ok && data.paired) {
-            stopAllPolling();
-            statusEl.textContent = '✅ Linked successfully!';
-            setTimeout(() => showSuccess(), 800);
-          } else {
-            dots = (dots + 1) % 4;
-            statusEl.textContent = 'Waiting for linking' + '.'.repeat(dots);
+            stopPolling();
+            if (countdownInterval) { clearInterval(countdownInterval); countdownInterval = null; }
+            showAlert('✅ Successfully linked! You can now use the bot.', 'success');
+            document.getElementById('codeTimer').textContent = '✅ Linked successfully';
+            document.getElementById('codeTimer').classList.remove('urgent');
           }
-        } catch {
-          dots = (dots + 1) % 4;
-          statusEl.textContent = 'Waiting for linking' + '.'.repeat(dots);
-        }
+        } catch {}
       };
 
-      poll();
-      pairingStatusInterval = setInterval(poll, 3000);
+      pollCode();
+      pollStatus();
+      pairingCodeInterval = setInterval(pollCode, 5000);
+      pairingStatusInterval = setInterval(pollStatus, 3000);
     }
 
-    function stopAllPolling() {
+    function stopPolling() {
       if (pairingCodeInterval) { clearInterval(pairingCodeInterval); pairingCodeInterval = null; }
       if (pairingStatusInterval) { clearInterval(pairingStatusInterval); pairingStatusInterval = null; }
-      if (countdownInterval) { clearInterval(countdownInterval); countdownInterval = null; }
     }
 
-    function cancelPairing() {
-      stopAllPolling();
-      resetToStep1();
-    }
+    // ── Tap to copy ──
+    function copyCode() {
+      const code = document.getElementById('codeValue').textContent;
+      const box = document.getElementById('codeBox');
+      const hint = document.getElementById('tapHint');
 
-    function resetToStep1() {
-      stopAllPolling();
-      currentPhone = '';
-      currentPassword = '';
-      document.getElementById('phone').value = '';
-      document.getElementById('password').value = '';
-      document.getElementById('pairCode').textContent = '• • • • • •';
-      document.getElementById('pairCodeTimer').textContent = 'Expires in 2:00';
-      document.getElementById('pairCodeTimer').classList.remove('urgent');
-      document.getElementById('step1Alert').classList.add('hidden');
-      document.getElementById('startBtn').disabled = false;
-      document.getElementById('startBtn').innerHTML = '<span>🔗 Generate Pairing Code</span>';
-      setStep(1);
-    }
+      if (!code || code.includes('•')) return;
 
-    function showSuccess() {
-      setStep(3);
-      document.getElementById('sessionIdDisplay').textContent = currentPhone;
-      document.getElementById('dashboardLink').href = getServerUrl() + '/';
-    }
-
-    function copySessionId() {
-      const sid = document.getElementById('sessionIdDisplay').textContent;
-      const btn = document.getElementById('copyBtn');
-      if (navigator.clipboard && sid) {
-        navigator.clipboard.writeText(sid).then(() => {
-          btn.textContent = '✓ Copied';
-          setTimeout(() => { btn.textContent = 'Copy'; }, 2000);
+      // Try modern clipboard API
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(code).then(() => {
+          box.classList.add('copied');
+          hint.innerHTML = '✓ Copied! Paste in WhatsApp';
+          setTimeout(() => {
+            box.classList.remove('copied');
+            hint.innerHTML = '👆 Tap to copy';
+          }, 2500);
         }).catch(() => {
-          btn.textContent = '✗ Failed';
-          setTimeout(() => { btn.textContent = 'Copy'; }, 2000);
+          fallbackCopy(code, box, hint);
         });
+      } else {
+        fallbackCopy(code, box, hint);
       }
     }
 
-    // ── Init ──
-    checkServerStatus();
+    function fallbackCopy(code, box, hint) {
+      // Fallback for older browsers
+      const ta = document.createElement('textarea');
+      ta.value = code;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        document.execCommand('copy');
+        box.classList.add('copied');
+        hint.innerHTML = '✓ Copied! Paste in WhatsApp';
+        setTimeout(() => {
+          box.classList.remove('copied');
+          hint.innerHTML = '👆 Tap to copy';
+        }, 2500);
+      } catch (e) {
+        hint.innerHTML = 'Long-press to copy';
+      }
+      document.body.removeChild(ta);
+    }
+
+    // ── Reset form ──
+    function resetForm() {
+      stopPolling();
+      if (countdownInterval) { clearInterval(countdownInterval); countdownInterval = null; }
+      currentPhone = '';
+      document.getElementById('phone').value = '';
+      document.getElementById('codeValue').textContent = '• • • • • •';
+      document.getElementById('codeTimer').textContent = 'Expires in 2:00';
+      document.getElementById('codeTimer').classList.remove('urgent');
+      document.getElementById('tapHint').innerHTML = '👆 Tap to copy';
+      document.getElementById('codeBox').classList.remove('copied');
+      document.getElementById('codeView').classList.add('hidden');
+      document.getElementById('inputView').classList.remove('hidden');
+      document.getElementById('generateBtn').disabled = false;
+      document.getElementById('generateBtn').innerHTML = '<span>🔗 Generate Session Code</span>';
+      hideAlert();
+      document.getElementById('phone').focus();
+    }
+
+    // Enter key triggers generate
+    document.getElementById('phone').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') generateCode();
+    });
+
+    // Auto-focus on load
     document.getElementById('phone').focus();
   </script>
 </body>
