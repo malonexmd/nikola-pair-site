@@ -1,0 +1,10 @@
+include: ["/index.html"]
+
+plugins:
+  - jekyll-relative-links
+relative_links:
+  enabled: true
+  collections: true
+
+title: NIKOLA MD Pair Site
+description: Standalone pair site for the NIKOLA MD WhatsApp bot

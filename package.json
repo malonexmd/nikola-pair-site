@@ -1,0 +1,13 @@
+{
+  "name": "nikola-md-pair-site",
+  "version": "1.0.0",
+  "description": "Standalone pair site for NIKOLA MD WhatsApp bot",
+  "private": true,
+  "scripts": {
+    "dev": "npx serve .",
+    "build": "echo 'Static site — no build step needed'"
+  },
+  "keywords": ["whatsapp", "bot", "pair", "nikola-md"],
+  "author": "Nikola MD",
+  "license": "Personal Use"
+}
